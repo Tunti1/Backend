@@ -71,7 +71,7 @@ class Projekti:
             s = Projekt(**s)
             for komponenta in komponente:
                 komponenta["id"] = str(gid())
-                komponenta["ispit"] = s
+                komponenta["projekt"] = s
                 st = Komponenta(**komponenta)
             return True, None
 

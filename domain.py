@@ -1,4 +1,4 @@
-from model import Student, Projekt, Komponenta, Grupa
+from model import Student, Projekt, Ocjene_studenata, Grupa
 from pony.orm import db_session, select
 from uuid import uuid4 as gid, UUID
 
@@ -29,6 +29,21 @@ class Grupe:
         except Exception as e:
             return False, str(e)
 
+
+    @db_session
+    def update(x): 
+                Grupa[x["id"]].delete()
+                
+                x["id"]=str(gid())   
+                studenti_zbirno = x["studenti"]
+                svi_studenti = list(Student[s] for s in studenti_zbirno)
+                x["studenti"] = svi_studenti 
+                Grupa(**x)
+          
+
+  
+
+
 class Studenti:
     @db_session()
     def listaj():
@@ -49,35 +64,61 @@ class Projekti:
     @db_session()
     def listaj():
         q = select(i for i in Projekt)
+            
         data = [x.to_dict(with_collections=True) for x in q]
         for d in data:
-            komponente = d["komponente"]
+            grupe = d["grupe"]
          
-            d["komponente"] = Projekti.dohvati_komponentu(komponente)
-        return data 
+            d["grupe"] = Projekti.dohvati_komponentu(grupe)
+            return data
 
     @db_session
     def dohvati_komponentu(ids):
-        q = select(s for s in Komponenta if s.id in ids)
-        data = [x.to_dict("ocjena student brojBodova") for x in q]
-        return data
+        q = select(s for s in Grupa if s.id in ids)
+        grupe = [x.to_dict("naziv") for x in q]
+        return grupe
 
     @db_session
     def dodaj(s):
         try:
             s["id"] = str(gid())
-            komponente = s["komponente"]
-            del s["komponente"]  
+            
             s = Projekt(**s)
-            for komponenta in komponente:
-                komponenta["id"] = str(gid())
-                komponenta["projekt"] = s
-                st = Komponenta(**komponenta)
+            
+            return True, None
+
+        except Exception as e:
+            return False, str(e)
+class Ocjene:
+    @db_session()
+    def listaj():
+        q = select(i for i in Ocjene_studenata)
+        data = [x.to_dict() for x in q]
+        return data 
+
+    
+
+    @db_session
+    def dodaj(s):
+        try:
+            s["id"] = str(gid())
+            
+            s = Ocjene_studenata(**s)
+            
             return True, None
 
         except Exception as e:
             return False, str(e)
 
+    @db_session
+    def update(s):
+        try:
+            Ocjene_studenata[s["id"]].set(**s)
+
+            return True,None
+
+        except Exception as e:
+            return False,str(e)
 
 if __name__ == "__main__":
     studenti = Studenti.listaj()

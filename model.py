@@ -8,7 +8,7 @@ db = Database()
 print("Radim ")
 
 
-db.bind(provider='sqlite', filename='backend-Antunovic.sqlite', create_db=True)
+db.bind(provider='sqlite', filename='backend--Antunovic.sqlite', create_db=True)
 
 
 class Grupa(db.Entity):
@@ -24,23 +24,25 @@ class Student(db.Entity):
     ime = Required(str)
     Prezime = Required(str)
     grupe = Set(Grupa)
-    komponente = Set("Komponenta")
+    ocjene = Set("Ocjene_studenata")
 
 
 class Projekt(db.Entity):
     id = PrimaryKey(str)
     link= Required(str)
-    maxBodova = Optional(int)
-    komponente = Set("Komponenta")
+    opis= Required(str)
     grupe = Required(Grupa)
 
 
-class Komponenta(db.Entity):
-    id = PrimaryKey(int)
+class Ocjene_studenata(db.Entity):
+    id = PrimaryKey(str)
+    seminar=Optional(int)
+    kolokvij1=Optional(int)
+    kolokvij2=Optional(int)
+    bodoviProjekt=Optional(int)
     brojBodova = Required(float)
-    ocjena = Optional(int)
-    projekt = Required(Projekt)
     student = Required(Student)
+    obrazlozenje=Optional(str)
 
 
 db.generate_mapping(check_tables=True, create_tables=True)
